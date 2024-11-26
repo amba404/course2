@@ -72,13 +72,13 @@ public class MathQuestionService implements QuestionService {
                 nums[0] = nums[1] + nums[2];
                 break;
             case "*":
-                nums[0] = r.nextInt(10) + 1;
-                nums[1] = r.nextInt(10) + 1;
+                nums[0] = r.nextInt(9) + 2;
+                nums[1] = r.nextInt(9) + 2;
                 nums[2] = nums[0] * nums[1];
                 break;
             case "/":
-                nums[1] = r.nextInt(10) + 1;
-                nums[2] = r.nextInt(10) + 1;
+                nums[1] = r.nextInt(9) + 2;
+                nums[2] = r.nextInt(9) + 2;
                 nums[0] = nums[1] * nums[2];
                 break;
         }
