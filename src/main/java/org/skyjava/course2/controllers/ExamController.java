@@ -54,4 +54,10 @@ public class ExamController {
         return null;//questionService.remove();
     }
 
+    @GetMapping("/{theme}")
+    public Collection<Question> getAll(@PathVariable String theme) {
+        QuestionService questionService = examinerService.getExaminerService(theme);
+        return questionService.getAll();
+    }
+
 }
