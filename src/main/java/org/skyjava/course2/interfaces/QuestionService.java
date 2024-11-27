@@ -8,7 +8,7 @@ public interface QuestionService {
     Question add(String question, String answer);
     Question remove(String question, String answer);
     Question find(String question, String answer);
-    Question GetRandomQuestion();
+    Question getRandomQuestion();
     Collection<Question> getAll();
     Collection<Question> getRandomQuestions(int count);
 

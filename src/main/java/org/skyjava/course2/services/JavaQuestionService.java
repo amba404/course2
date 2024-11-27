@@ -40,7 +40,7 @@ public class JavaQuestionService implements QuestionService {
     }
 
     @Override
-    public Question GetRandomQuestion() {
+    public Question getRandomQuestion() {
         if (getSize() == 0) {
             return null;
         }
@@ -63,7 +63,7 @@ public class JavaQuestionService implements QuestionService {
         } else {
             Set<Question> set = new HashSet<>();
             while (set.size() < count) {
-                set.add(GetRandomQuestion());
+                set.add(getRandomQuestion());
             }
             return List.copyOf(set);
         }

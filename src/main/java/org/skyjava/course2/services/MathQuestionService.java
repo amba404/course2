@@ -27,7 +27,7 @@ public class MathQuestionService implements QuestionService {
     }
 
     @Override
-    public Question GetRandomQuestion() {
+    public Question getRandomQuestion() {
         return find(Math.abs(rand.nextLong()));
     }
 
@@ -40,7 +40,7 @@ public class MathQuestionService implements QuestionService {
     public Collection<Question> getRandomQuestions(int count) {
         List<Question> result = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            Question q = find(Math.abs(rand.nextLong()));
+            Question q = getRandomQuestion();
             result.add(q);
         }
         return result;
