@@ -1,5 +1,6 @@
 package org.skyjava.course2.services;
 
+import org.skyjava.course2.domains.Answer;
 import org.skyjava.course2.domains.Question;
 import org.skyjava.course2.domains.QuestionJava;
 import org.skyjava.course2.interfaces.QuestionService;
@@ -16,6 +17,11 @@ public class JavaQuestionService implements QuestionService {
 
     @Override
     public Question add(String question, String answer) {
+        return add(question, new Answer(answer, false));
+    }
+
+    @Override
+    public Question add(String question, Answer answer) {
         Question newQuestion = getNewQuestion(question, answer);
         if (!questions.contains(newQuestion)) {
             questions.add(newQuestion);
@@ -29,17 +35,25 @@ public class JavaQuestionService implements QuestionService {
 
     @Override
     public Question remove(String question, String answer) {
+        Question newQuestion = getNewQuestion(question, new Answer(answer, false));
+        if (questions.contains(newQuestion)) {
+            int pos = questions.indexOf(newQuestion);
+            Question result = questions.get(pos);
+            result.delAnswer(answer);
+            if (result.getAnswersCount() == 0) {
+                questions.remove(pos);
+            }
+            return result;
+        }
         return null;
     }
 
     @Override
     public Question find(String question, String answer) {
-        Question newQuestion = getNewQuestion(question, answer);
+        Question newQuestion = getNewQuestion(question, new Answer(answer, false));
         if (questions.contains(newQuestion)) {
             int pos = questions.indexOf(newQuestion);
-            Question result = questions.get(pos);
-            questions.remove(pos);
-            return result;
+            return questions.get(pos);
         }
         return null;
     }
@@ -107,9 +121,9 @@ public class JavaQuestionService implements QuestionService {
         }
     }
 
-    private Question getNewQuestion(String question, String answer) {
+    private Question getNewQuestion(String question, Answer answer) {
         try {
-            Constructor<? extends Question> constructor = classQuestion.getConstructor(String.class, String.class);
+            Constructor<? extends Question> constructor = classQuestion.getConstructor(String.class, Answer.class);
             return constructor.newInstance(question, answer);
         } catch (Exception e) {
             throw new RuntimeException(e);

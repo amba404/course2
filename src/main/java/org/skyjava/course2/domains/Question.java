@@ -1,28 +1,29 @@
 package org.skyjava.course2.domains;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class Question {
+    private final Map<String, Boolean> answers = new HashMap<>();
     private long id;
     private String question;
-    private String answer;
 
     public Question() {
     }
 
-    public Question(@NotNull String question, @NotNull String answer) {
+    public Question(@NotNull String question, @NotNull Answer answer) {
         this(question, answer, 0);
     }
 
-    public Question(@NotNull String question, @NotNull String answer, long id) {
-        if (question.isBlank() || answer.isBlank()) {
+    public Question(@NotNull String question, @NotNull Answer answer, long id) {
+        if (question.isBlank() || answer.answer.isBlank()) {
             throw new IllegalArgumentException("Вопрос и/или ответ не должны быть пустыми");
         }
         this.question = question;
-        this.answer = answer;
+        this.answers.put(answer.answer, answer.isCorrect);
         if (id > 0) {
             this.id = id;
         } else {
@@ -38,12 +39,41 @@ public abstract class Question {
         this.question = question;
     }
 
-    public String getAnswer() {
-        return answer;
+    @JsonIgnore
+    public int getAnswersCount() {
+        return answers.size();
     }
 
-    public void setAnswer(String answer) {
-        this.answer = answer;
+    public Collection<String> getAnswersCorrect() {
+        if (answers.size() == 1) {
+            return answers.keySet();
+        } else {
+            return answers.entrySet().stream()
+                    .filter(Map.Entry::getValue)
+                    .map(Map.Entry::getKey).
+                    collect(Collectors.toSet());
+        }
+    }
+
+    public Collection<String> getAnswersDisplayed() {
+        if (answers.size() == 1) {
+            return new HashSet<>();
+        } else {
+            return answers.keySet();
+        }
+    }
+
+    @JsonIgnore
+    public Collection<String> getAnswersAll() {
+        return answers.keySet();
+    }
+
+    public void setAnswer(@NotNull Answer answer) {
+        this.answers.put(answer.answer, answer.isCorrect);
+    }
+
+    public void delAnswer(@NotNull String answer) {
+        this.answers.remove(answer);
     }
 
     public long getId() {
@@ -77,7 +107,7 @@ public abstract class Question {
         return "Question{" +
                 "id=" + id +
                 ", question='" + question + '\'' +
-                ", answer='" + answer + '\'' +
+                ", answers='" + answers + '\'' +
                 '}';
     }
 

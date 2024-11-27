@@ -6,11 +6,11 @@ public class QuestionMath extends Question {
     public QuestionMath() {
     }
 
-    public QuestionMath(@NotNull String question, @NotNull String answer) {
+    public QuestionMath(@NotNull String question, @NotNull Answer answer) {
         super(question, answer);
     }
 
-    public QuestionMath(@NotNull String question, @NotNull String answer, long id) {
+    public QuestionMath(@NotNull String question, @NotNull Answer answer, long id) {
         super(question, answer, id);
     }
 

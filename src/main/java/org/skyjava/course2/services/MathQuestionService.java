@@ -1,5 +1,6 @@
 package org.skyjava.course2.services;
 
+import org.skyjava.course2.domains.Answer;
 import org.skyjava.course2.domains.Question;
 import org.skyjava.course2.domains.QuestionMath;
 import org.skyjava.course2.interfaces.QuestionService;
@@ -13,6 +14,11 @@ import java.util.stream.Collectors;
 public class MathQuestionService implements QuestionService {
     private final Random rand = new Random();
     private final Class<? extends Question> classQuestion = QuestionMath.class;
+
+    @Override
+    public Question add(String question, Answer answer) {
+        throw new UnsupportedOperationException("Метод не поддерживается: add");
+    }
 
     @Override
     public Question add(String question, String answer) {
@@ -101,7 +107,7 @@ public class MathQuestionService implements QuestionService {
                 .map(StringBuilder::toString)
                 .collect(Collectors.joining(" "));
 
-        return new QuestionMath(question, answer, id);
+        return new QuestionMath(question, new Answer(answer, true), id);
     }
 
     @Override

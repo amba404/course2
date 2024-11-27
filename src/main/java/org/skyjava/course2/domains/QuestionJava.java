@@ -6,11 +6,11 @@ public class QuestionJava extends Question {
     public QuestionJava() {
     }
 
-    public QuestionJava(@NotNull String question, @NotNull String answer) {
+    public QuestionJava(@NotNull String question, @NotNull Answer answer) {
         super(question, answer);
     }
 
-    public QuestionJava(@NotNull String question, @NotNull String answer, long id) {
+    public QuestionJava(@NotNull String question, @NotNull Answer answer, long id) {
         super(question, answer, id);
     }
 

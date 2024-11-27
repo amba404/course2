@@ -1,5 +1,6 @@
 package org.skyjava.course2.controllers;
 
+import org.skyjava.course2.domains.Answer;
 import org.skyjava.course2.domains.Question;
 import org.skyjava.course2.interfaces.ExaminerService;
 import org.skyjava.course2.interfaces.QuestionService;
@@ -23,12 +24,16 @@ public class ExamController {
     }
 
     @GetMapping("/{theme}/add")
-    public Question add(@PathVariable String theme,
-                        @RequestParam(name = "question", required = false) String question,
-                        @RequestParam(name = "answer", required = false) String answer,
-                        @RequestParam(name = "id", required = false) Long id) {
+    public Question add(@PathVariable
+                        String theme,
+                        @RequestParam(name = "question", required = false)
+                        String question,
+                        @RequestParam(name = "answer", required = false)
+                        String answer,
+                        @RequestParam(name = "correct", required = false, defaultValue = "false")
+                        boolean correct) {
         QuestionService questionService = examinerService.getExaminerService(theme);
-        return questionService.add(question, answer);
+        return questionService.add(question, new Answer(answer, correct));
     }
 
     @GetMapping("/{theme}/find")
@@ -51,7 +56,11 @@ public class ExamController {
                            @RequestParam(name = "answer", required = false) String answer,
                            @RequestParam(name = "id", required = false) Long id) {
         QuestionService questionService = examinerService.getExaminerService(theme);
-        return null;//questionService.remove();
+        if (id != null) {
+            return questionService.remove(id);
+        } else {
+            return questionService.remove(question, answer);
+        }
     }
 
     @GetMapping("/{theme}")

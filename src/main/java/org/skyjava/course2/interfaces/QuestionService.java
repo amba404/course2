@@ -1,5 +1,6 @@
 package org.skyjava.course2.interfaces;
 
+import org.skyjava.course2.domains.Answer;
 import org.skyjava.course2.domains.Question;
 
 import java.util.Collection;
@@ -17,6 +18,7 @@ public interface QuestionService {
 
     Collection<Question> getRandomQuestions(int count);
 
+    /// ///////
     int getSize();
 
     Question find(long id);
@@ -24,4 +26,6 @@ public interface QuestionService {
     Question remove(long id);
 
     String getTheme();
+
+    Question add(String question, Answer answer);
 }
