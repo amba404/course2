@@ -14,7 +14,7 @@ public class JavaQuestionService implements QuestionService {
     @Override
     public Question add(String question, String answer) {
         Question newQuestion = new Question(question, answer);
-        if(!questions.contains(newQuestion)) {
+        if (!questions.contains(newQuestion)) {
             questions.add(newQuestion);
             return newQuestion;
         } else {
@@ -31,12 +31,21 @@ public class JavaQuestionService implements QuestionService {
 
     @Override
     public Question find(String question, String answer) {
+        Question newQuestion = new Question(question, answer);
+        if (questions.contains(newQuestion)) {
+            int pos = questions.indexOf(newQuestion);
+            Question result = questions.get(pos);
+            questions.remove(pos);
+            return result;
+        }
         return null;
     }
 
     @Override
     public Question find(long id) {
-        return null;
+        return questions.stream()
+                .filter(q -> q.getId() == id).findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -76,6 +85,10 @@ public class JavaQuestionService implements QuestionService {
 
     @Override
     public Question remove(long id) {
-        return null;
+        Question result = find(id);
+        if (result != null) {
+            questions.remove(result);
+        }
+        return result;
     }
 }
