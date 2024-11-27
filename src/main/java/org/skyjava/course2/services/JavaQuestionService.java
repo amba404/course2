@@ -8,7 +8,7 @@ import java.util.*;
 
 @Service
 public class JavaQuestionService implements QuestionService {
-    private Random rand = new Random();
+    private final Random rand = new Random();
     List<Question> questions = new ArrayList<>();
 
     @Override
