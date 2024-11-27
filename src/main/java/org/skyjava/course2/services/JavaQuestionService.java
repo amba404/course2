@@ -6,7 +6,6 @@ import org.skyjava.course2.domains.QuestionJava;
 import org.skyjava.course2.interfaces.QuestionService;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.AnnotatedArrayType;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
