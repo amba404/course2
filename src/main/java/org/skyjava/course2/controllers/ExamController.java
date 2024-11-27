@@ -37,7 +37,7 @@ public class ExamController {
                          @RequestParam(name = "answer", required = false) String answer,
                          @RequestParam(name = "id", required = false) Long id) {
         QuestionService questionService = examinerService.getExaminerService(theme);
-        if(id!=null){
+        if (id != null) {
             return questionService.find(id);
         } else {
             return questionService.find(question, answer);

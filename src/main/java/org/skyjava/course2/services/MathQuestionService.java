@@ -1,15 +1,18 @@
 package org.skyjava.course2.services;
 
 import org.skyjava.course2.domains.Question;
+import org.skyjava.course2.domains.QuestionMath;
 import org.skyjava.course2.interfaces.QuestionService;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class MathQuestionService implements QuestionService {
-    private Random rand = new Random();
+    private final Random rand = new Random();
+    private final Class<? extends Question> classQuestion = QuestionMath.class;
 
     @Override
     public Question add(String question, String answer) {
@@ -98,11 +101,22 @@ public class MathQuestionService implements QuestionService {
                 .map(StringBuilder::toString)
                 .collect(Collectors.joining(" "));
 
-        return new Question(question, answer, id);
+        return new QuestionMath(question, answer, id);
     }
 
     @Override
     public Question remove(long id) {
         throw new UnsupportedOperationException("Метод не поддерживается: remove");
+    }
+
+    @Override
+    public String getTheme() {
+        try {
+            Constructor<? extends Question> constructor = classQuestion.getConstructor();
+            constructor.setAccessible(true);
+            return constructor.newInstance().getTheme();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

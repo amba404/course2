@@ -1,19 +1,22 @@
 package org.skyjava.course2.services;
 
 import org.skyjava.course2.domains.Question;
+import org.skyjava.course2.domains.QuestionJava;
 import org.skyjava.course2.interfaces.QuestionService;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 @Service
 public class JavaQuestionService implements QuestionService {
     private final Random rand = new Random();
-    List<Question> questions = new ArrayList<>();
+    private final List<Question> questions = new ArrayList<>();
+    private final Class<? extends Question> classQuestion = QuestionJava.class;
 
     @Override
     public Question add(String question, String answer) {
-        Question newQuestion = new Question(question, answer);
+        Question newQuestion = getNewQuestion(question, answer);
         if (!questions.contains(newQuestion)) {
             questions.add(newQuestion);
             return newQuestion;
@@ -31,7 +34,7 @@ public class JavaQuestionService implements QuestionService {
 
     @Override
     public Question find(String question, String answer) {
-        Question newQuestion = new Question(question, answer);
+        Question newQuestion = getNewQuestion(question, answer);
         if (questions.contains(newQuestion)) {
             int pos = questions.indexOf(newQuestion);
             Question result = questions.get(pos);
@@ -63,12 +66,13 @@ public class JavaQuestionService implements QuestionService {
 
     @Override
     public Collection<Question> getRandomQuestions(int count) {
-        if (getSize() == 0) {
+        int size = getSize();
+        if (size == 0) {
             return List.of();
-        } else if (count >= getSize() / 2) {
+        } else if (count >= size / 2) {
             List<Question> all = new ArrayList<>(getAll());
             Collections.shuffle(all);
-            return all.subList(0, count);
+            return all.subList(0, Math.min(size, count));
         } else {
             Set<Question> set = new HashSet<>();
             while (set.size() < count) {
@@ -90,5 +94,25 @@ public class JavaQuestionService implements QuestionService {
             questions.remove(result);
         }
         return result;
+    }
+
+    @Override
+    public String getTheme() {
+        try {
+            Constructor<? extends Question> constructor = classQuestion.getConstructor();
+            constructor.setAccessible(true);
+            return constructor.newInstance().getTheme();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Question getNewQuestion(String question, String answer) {
+        try {
+            Constructor<? extends Question> constructor = classQuestion.getConstructor(String.class, String.class);
+            return constructor.newInstance(question, answer);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -14,8 +14,8 @@ public class ExaminerServiceImpl implements ExaminerService {
     public ExaminerServiceImpl(JavaQuestionService javaQuestionService,
                                MathQuestionService mathQuestionService) {
         examinerServices = new HashMap<>();
-        examinerServices.put("java", javaQuestionService);
-        examinerServices.put("math", mathQuestionService);
+        examinerServices.put(javaQuestionService.getTheme(), javaQuestionService);
+        examinerServices.put(mathQuestionService.getTheme(), mathQuestionService);
     }
 
     @Override

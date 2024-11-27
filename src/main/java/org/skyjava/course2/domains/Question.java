@@ -5,10 +5,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.Random;
 
-public class Question {
-    private final long id;
-    private final String question;
+public abstract class Question {
+    private long id;
+    private String question;
     private String answer;
+
+    public Question() {
+    }
 
     public Question(@NotNull String question, @NotNull String answer) {
         this(question, answer, 0);
@@ -31,6 +34,10 @@ public class Question {
         return question;
     }
 
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
     public String getAnswer() {
         return answer;
     }
@@ -42,6 +49,12 @@ public class Question {
     public long getId() {
         return id;
     }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    abstract public String getTheme();
 
     @Override
     public boolean equals(Object o) {
@@ -67,4 +80,5 @@ public class Question {
                 ", answer='" + answer + '\'' +
                 '}';
     }
+
 }
