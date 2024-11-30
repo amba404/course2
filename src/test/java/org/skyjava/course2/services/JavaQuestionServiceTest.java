@@ -6,14 +6,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyjava.course2.domains.Answer;
 import org.skyjava.course2.domains.Question;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@SpringBootTest
 class JavaQuestionServiceTest {
     List<String> testList = new ArrayList<>();
-    JavaQuestionService service = new JavaQuestionService();
+
+    @Autowired
+    JavaQuestionService service;
 
     @BeforeEach
     public void setUp() {
@@ -62,7 +67,7 @@ class JavaQuestionServiceTest {
 
     @Test
     void findById_Returns_null() {
-        Assertions.assertNull(service.find(100));
+        Assertions.assertNull(service.find(1000000));
     }
 
     @Test
@@ -132,17 +137,14 @@ class JavaQuestionServiceTest {
     }
 
     @Test
-    void getRandomQuestions(){
+    void getRandomQuestions() {
         Collection<Question> q = service.getAll();
 
         Assertions.assertNotEquals(q, service.getRandomQuestions(q.size()));
 
-        Assertions.assertNotEquals(q.size()+2,
-                service.getRandomQuestions(q.size()+2).size());
+        Assertions.assertThrows(IllegalArgumentException.class, () -> service.getRandomQuestions(q.size() + 1));
 
         Assertions.assertNotEquals(service.getRandomQuestions(3),
                 service.getRandomQuestions(3));
-
     }
-
 }

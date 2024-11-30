@@ -29,7 +29,7 @@ public class ExaminerServiceImpl implements ExaminerService {
     @Override
     public Collection<Question> getQuestions(int amount) {
         if (amount < 1) {
-            return Set.of();
+            throw new IllegalArgumentException("Количество вопросов не может быть меньше 1");
         }
 
         List<Question> questions = new ArrayList<>();

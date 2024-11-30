@@ -3,14 +3,18 @@ package org.skyjava.course2.services;
 import org.junit.jupiter.api.Test;
 import org.skyjava.course2.domains.Question;
 import org.skyjava.course2.interfaces.ExaminerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 class ExaminerServiceImplTest {
 
-    ExaminerService examinerService = new ExaminerServiceImpl(new JavaQuestionService(), new MathQuestionService());
+    @Autowired
+    ExaminerService examinerService;
 
     @Test
     void getExaminerService() {

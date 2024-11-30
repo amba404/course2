@@ -4,16 +4,25 @@ import org.skyjava.course2.domains.Answer;
 import org.skyjava.course2.domains.Question;
 import org.skyjava.course2.domains.QuestionJava;
 import org.skyjava.course2.interfaces.QuestionService;
+import org.skyjava.course2.repositories.QuestionRepository;
+import org.skyjava.course2.repositories.QuestionSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
 @Service
 public class JavaQuestionService implements QuestionService {
-    private final Random rand = new Random();
-    private final List<Question> questions = new ArrayList<>();
     private final Class<? extends Question> classQuestion = QuestionJava.class;
+    private final QuestionRepository repository;
+
+    public JavaQuestionService(QuestionRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public Question add(String question, String answer) {
@@ -23,25 +32,20 @@ public class JavaQuestionService implements QuestionService {
     @Override
     public Question add(String question, Answer answer) {
         Question newQuestion = getNewQuestion(question, answer);
-        if (!questions.contains(newQuestion)) {
-            questions.add(newQuestion);
-            return newQuestion;
-        } else {
-            Question oldQuestion = questions.get(questions.indexOf(newQuestion));
-            oldQuestion.setAnswer(answer);
-            return oldQuestion;
-        }
+        newQuestion.setAnswer(answer);
+        repository.save(newQuestion);
+        return newQuestion;
     }
 
     @Override
     public Question remove(String question, String answer) {
-        Question newQuestion = getNewQuestion(question, new Answer(answer, false));
-        if (questions.contains(newQuestion)) {
-            int pos = questions.indexOf(newQuestion);
-            Question result = questions.get(pos);
+        Question result = repository.findByQuestion(question).orElse(null);
+        if (result != null) {
             result.delAnswer(answer);
             if (result.getAnswersCount() == 0) {
-                questions.remove(pos);
+                repository.delete(result);
+            } else {
+                repository.save(result);
             }
             return result;
         }
@@ -50,18 +54,12 @@ public class JavaQuestionService implements QuestionService {
 
     @Override
     public Question find(String question, String answer) {
-        Question newQuestion = getNewQuestion(question, new Answer(answer, false));
-        if (questions.contains(newQuestion)) {
-            int pos = questions.indexOf(newQuestion);
-            return questions.get(pos);
-        }
-        return null;
+        return repository.findByQuestion(question).orElse(null);
     }
 
     @Override
     public Question find(long id) {
-        return questions.stream()
-                .filter(q -> q.getId() == id).findFirst()
+        return repository.findById(id)
                 .orElse(null);
     }
 
@@ -70,42 +68,38 @@ public class JavaQuestionService implements QuestionService {
         if (getSize() == 0) {
             return null;
         }
-        return questions.get(rand.nextInt(getSize()));
+        return getRandomQuestions(1).iterator().next();
     }
 
     @Override
     public Collection<Question> getAll() {
-        return List.copyOf(questions);
+        return repository.findAll();
     }
 
     @Override
     public Collection<Question> getRandomQuestions(int count) {
         int size = getSize();
-        if (size == 0) {
-            return List.of();
-        } else if (count >= size / 2) {
-            List<Question> all = new ArrayList<>(getAll());
-            Collections.shuffle(all);
-            return all.subList(0, Math.min(size, count));
+        if (size < count) {
+            throw new IllegalArgumentException(String.format(
+                    Locale.ROOT
+                    ,"%s: Количество вопросов меньше запрашиваемого (%d < %d)"
+                    , getTheme(), size, count));
         } else {
-            Set<Question> set = new HashSet<>();
-            while (set.size() < count) {
-                set.add(getRandomQuestion());
-            }
-            return List.copyOf(set);
+            Page<Question> all = repository.findAll(new QuestionSpecification(), PageRequest.of(0, count));
+            return all.getContent();
         }
     }
 
     @Override
     public int getSize() {
-        return questions.size();
+        return (int) repository.count();
     }
 
     @Override
     public Question remove(long id) {
         Question result = find(id);
         if (result != null) {
-            questions.remove(result);
+            repository.delete(result);
         }
         return result;
     }
@@ -113,7 +107,7 @@ public class JavaQuestionService implements QuestionService {
     @Override
     public String getTheme() {
         try {
-            Constructor<? extends Question> constructor = classQuestion.getConstructor();
+            Constructor<? extends Question> constructor = classQuestion.getDeclaredConstructor();
             constructor.setAccessible(true);
             return constructor.newInstance().getTheme();
         } catch (Exception e) {
@@ -122,6 +116,10 @@ public class JavaQuestionService implements QuestionService {
     }
 
     private Question getNewQuestion(String question, Answer answer) {
+        Question result = repository.findByQuestion(question).orElse(null);
+        if (result != null) {
+            return result;
+        }
         try {
             Constructor<? extends Question> constructor = classQuestion.getConstructor(String.class, Answer.class);
             return constructor.newInstance(question, answer);

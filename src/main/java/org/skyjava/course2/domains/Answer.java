@@ -1,13 +1,6 @@
 package org.skyjava.course2.domains;
 
-public class Answer {
-    final public String answer;
-    final public boolean isCorrect;
-
-    public Answer(String answer, boolean isCorrect) {
-        this.answer = answer;
-        this.isCorrect = isCorrect;
-    }
+public record Answer(String answer, boolean isCorrect) {
 
     @Override
     public String toString() {

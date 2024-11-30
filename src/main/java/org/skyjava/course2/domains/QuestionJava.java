@@ -1,9 +1,12 @@
 package org.skyjava.course2.domains;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Transient;
 import org.jetbrains.annotations.NotNull;
 
+@Entity
 public class QuestionJava extends Question {
-    public QuestionJava() {
+    protected QuestionJava() {
     }
 
     public QuestionJava(@NotNull String question, @NotNull Answer answer) {

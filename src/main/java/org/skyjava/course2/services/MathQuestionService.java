@@ -37,7 +37,7 @@ public class MathQuestionService implements QuestionService {
 
     @Override
     public Question getRandomQuestion() {
-        return find(Math.abs(rand.nextLong()));
+        return find(rand.nextLong());
     }
 
     @Override
@@ -118,7 +118,7 @@ public class MathQuestionService implements QuestionService {
     @Override
     public String getTheme() {
         try {
-            Constructor<? extends Question> constructor = classQuestion.getConstructor();
+            Constructor<? extends Question> constructor = classQuestion.getDeclaredConstructor();
             constructor.setAccessible(true);
             return constructor.newInstance().getTheme();
         } catch (Exception e) {

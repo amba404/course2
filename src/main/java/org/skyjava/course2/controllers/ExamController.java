@@ -5,6 +5,8 @@ import org.skyjava.course2.domains.Question;
 import org.skyjava.course2.interfaces.ExaminerService;
 import org.skyjava.course2.interfaces.QuestionService;
 import org.skyjava.course2.services.ExaminerServiceImpl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -67,6 +69,16 @@ public class ExamController {
     public Collection<Question> getAll(@PathVariable String theme) {
         QuestionService questionService = examinerService.getExaminerService(theme);
         return questionService.getAll();
+    }
+
+    @ExceptionHandler(UnsupportedOperationException.class)
+    public ResponseEntity<String> handleException_405(UnsupportedOperationException e) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleException_400(IllegalArgumentException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
 }
